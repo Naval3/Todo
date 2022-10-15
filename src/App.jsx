@@ -1,10 +1,31 @@
 import React, { useState } from "react";
 import Header from "./Header";
+import ToDoList from "./ToDoList";
 
 function App() {
   const [input, setInput] = useState(false);
+  const [currentItem, setCurrentItem] = useState(""); //undefine - null
+  const [itemList, updateItemList] = useState([]);
 
   function handleInputOpner() {
+    setInput(!input);
+  }
+
+  function onChangeHandler(e) {
+    setCurrentItem(e.target.value);
+  }
+
+  function addItemToList() {
+    updateItemList([...itemList, { item: currentItem, key: Date.now() }]);
+    setCurrentItem("");
+    console.log("string is ", itemList);
+  }
+
+  function handleInputOpner() {
+    setInput(!input);
+  }
+
+  function handleCancel() {
     setInput(!input);
   }
 
@@ -18,13 +39,19 @@ function App() {
 
         <div className="mx-auto max-w-7xl">
           <h3 className="text-xl">Things To Do</h3>
-          <button
-            type="button"
-            onClick={handleInputOpner}
-            className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-white bg-yellow-500 border border-transparent rounded-full shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-          >
-            + Add a todo
-          </button>
+
+          <ToDoList itemList={itemList} />
+
+          {!input && (
+            <button
+              type="button"
+              onClick={handleInputOpner}
+              className="inline-flex mt-2 items-center px-3 py-2 text-sm font-medium leading-4 text-white bg-yellow-500 border border-transparent rounded-full shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+            >
+              + Add a todo
+            </button>
+          )}
+
           {input && (
             <div className="bg-white shadow sm:rounded-lg">
               <div className="px-4 py-5 sm:p-6">
@@ -35,15 +62,26 @@ function App() {
                     New Todo
                   </label>
                   <input
+                    value={currentItem}
+                    onChange={onChangeHandler}
                     id="to-do"
                     placeholder="Write a todo!!"
                     className="block w-full py-2 px-3 rounded-md shadow-sm sm:text-sm"
                   />
-                  <div className="flex justify-start pt-5">
-                    <button className="bg-yellow-500 hover:bg-yellow-600">
+                  <div className="flex justify-start gap-2 pt-5">
+                    <button
+                      onClick={addItemToList}
+                      className="inline-flex mt-2 items-center px-3 py-2 text-sm font-medium leading-4 text-white bg-yellow-500 border border-transparent rounded-md shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                    >
                       Save
                     </button>
-                    <button className="">Cancel</button>
+                    <button
+                      onClick={handleCancel}
+                      type="button"
+                      className="inline-flex mt-2 items-center px-3 py-2 text-sm font-medium leading-4 border border-black rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
               </div>

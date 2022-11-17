@@ -1,43 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CreateBox from "./CreateBox";
 import Header from "./Header";
 import ToDoList from "./ToDoList";
+import DoneList from "./DoneList";
+
+const getList1 = () => {
+  let list1 = localStorage.getItem("list1");
+  if (list1) {
+    return JSON.parse(localStorage.getItem("list1"));
+  } else {
+    return [];
+  }
+};
+
+const getList2 = () => {
+  let list1 = localStorage.getItem("list2");
+  if (list1) {
+    return JSON.parse(localStorage.getItem("list2"));
+  } else {
+    return [];
+  }
+};
 
 function App() {
-  const [input, setInput] = useState(false);
-  const [currentItem, setCurrentItem] = useState(""); //undefine - null
-  console.log("this is", currentItem);
-  const [itemList, updateItemList] = useState([]);
-  const [buttonStatus, setButtonStatus] = useState(true);
-  const [done, setDone] = useState([]);
+  const [write, setWrite] = useState(false);
+  const [inputWrite, setInputWrite] = useState("");
+  const [items, setItems] = useState(getList1());
+  const [newItem, setNewItem] = useState(getList2());
 
-  function handleInputOpner() {
-    setInput(!input);
-  }
+  const handleInputchange = (event) => {
+    setInputWrite(event.target.value);
+  };
 
-  function onChangeHandler(e) {
-    if (e.target.value.trim().length > 0) {
-      setButtonStatus(false);
+  const handleSaveButton = () => {
+    if (inputWrite == 0) {
+      setInputWrite("");
     } else {
-      setButtonStatus(true);
+      setItems([...items, inputWrite]);
+      setInputWrite("");
     }
-    setCurrentItem(e.target.value);
-  }
+  };
 
-  function addItemToList() {
-    setButtonStatus(true);
-    updateItemList([...itemList, { item: currentItem, key: Date.now() }]);
-    setCurrentItem("");
-    console.log("string is ", itemList);
-  }
+  const Open = () => {
+    setWrite(!write);
+  };
+  const Close = () => {
+    setWrite(false);
+  };
 
-  function handleInputOpner() {
-    setInput(!input);
-  }
+  const deleteItem = (id) => {
+    console.log(id);
+    const newItems = items.filter((element, index) => {
+      return index !== id;
+    });
+    setItems(newItems);
 
-  function handleCancel() {
-    setInput(!input);
-  }
+    const deletedItem = items.filter((element, index) => {
+      return index === id;
+    });
+    setNewItem([...newItem, deletedItem]);
+  };
+
+  const addItem = (id) => {
+    console.log(id);
+    const newItems = newItem.filter((element, index) => {
+      return index !== id;
+    });
+    setNewItem(newItems);
+  };
+
+  const goUp = (id) => {
+    const upItem = newItem.filter((element, index) => {
+      return index === id;
+    });
+    setItems([...items, upItem]);
+    const newItems = newItem.filter((element, index) => {
+      return index !== id;
+    });
+    setNewItem(newItems);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("list1", JSON.stringify(items));
+  }, [items]);
+
+  useEffect(() => {
+    localStorage.setItem("list2", JSON.stringify(newItem));
+  }, [newItem]);
 
   return (
     <>
@@ -48,34 +97,29 @@ function App() {
         </div>
 
         <div className="mx-auto mt-5 px-4 max-w-7xl">
-          <h3 className="text-xl text-gray-600 font-medium">Things to do</h3>
+          <ToDoList items={items} setItems={setItems} deleteItem={deleteItem} />
 
-          <ToDoList itemList={itemList} updateItemList={updateItemList} />
-
-          {!input && (
+          {!write && (
             <button
               type="button"
-              onClick={handleInputOpner}
+              onClick={Open}
               className="inline-flex mt-2 items-center px-3 py-2 text-sm font-medium leading-4 text-white bg-yellow-500 border border-transparent rounded-full shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
             >
               + Add a todo
             </button>
           )}
 
-          {input && (
+          {write && (
             <CreateBox
-              currentItem={currentItem}
-              onChangeHandler={onChangeHandler}
-              buttonStatus={buttonStatus}
-              addItemToList={addItemToList}
-              handleCancel={handleCancel}
+              inputWrite={inputWrite}
+              handleInputchange={handleInputchange}
+              handleSaveButton={handleSaveButton}
+              Close={Close}
             />
           )}
 
           <div>
-            <h3 className="mt-5 text-xl text-gray-600 font-medium">
-              Things done
-            </h3>
+            <DoneList newItem={newItem} setNewItem={setNewItem} goUp={goUp} />
           </div>
         </div>
       </div>

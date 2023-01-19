@@ -2,38 +2,39 @@ import React, { useState, useEffect } from "react";
 import CreateBox from "./CreateBox";
 import Header from "./Header";
 import ToDoList from "./ToDoList";
-import DoneList from "./DoneList";
+import Done from "./DoneList";
 
-const getList1 = () => {
-  let list1 = localStorage.getItem("list1");
-  if (list1) {
-    return JSON.parse(localStorage.getItem("list1"));
+const getTodos = () => {
+  let todos = localStorage.getItem("todos");
+  if (todos) {
+    return JSON.parse(localStorage.getItem("todos"));
   } else {
     return [];
   }
 };
 
-const getList2 = () => {
-  let list1 = localStorage.getItem("list2");
-  if (list1) {
-    return JSON.parse(localStorage.getItem("list2"));
+const getDone = () => {
+  let done = localStorage.getItem("done");
+  if (done) {
+    return JSON.parse(localStorage.getItem("done"));
   } else {
     return [];
   }
 };
 
 function App() {
-  const [write, setWrite] = useState(false);
+  const [box, setBox] = useState(false);
   const [inputWrite, setInputWrite] = useState("");
-  const [items, setItems] = useState(getList1());
-  const [newItem, setNewItem] = useState(getList2());
+  const [items, setItems] = useState(getTodos());
+  const [newItem, setNewItem] = useState(getDone());
 
-  const handleInputchange = (event) => {
-    setInputWrite(event.target.value);
+  const handleInputchange = (e) => {
+    setInputWrite(e.target.value);
   };
 
   const handleSaveButton = () => {
     if (inputWrite == 0) {
+      alert("Please write something.");
       setInputWrite("");
     } else {
       setItems([...items, inputWrite]);
@@ -42,50 +43,45 @@ function App() {
   };
 
   const Open = () => {
-    setWrite(!write);
+    setBox(!box);
   };
   const Close = () => {
-    setWrite(false);
+    setBox(false);
   };
 
-  const deleteItem = (id) => {
+  const goToDone = (id) => {
     console.log(id);
-    const newItems = items.filter((element, index) => {
+    const newItems = items.filter((_element, index) => {
       return index !== id;
     });
+    console.log("New item ", newItems);
     setItems(newItems);
 
-    const deletedItem = items.filter((element, index) => {
+    const deletedItem = items.filter((_element, index) => {
+      console.log(id);
       return index === id;
     });
+    console.log("deleted item ", deletedItem);
     setNewItem([...newItem, deletedItem]);
   };
 
-  const addItem = (id) => {
-    console.log(id);
-    const newItems = newItem.filter((element, index) => {
-      return index !== id;
-    });
-    setNewItem(newItems);
-  };
-
-  const goUp = (id) => {
-    const upItem = newItem.filter((element, index) => {
+  const goToTodo = (id) => {
+    const upItem = newItem.filter((_element, index) => {
       return index === id;
     });
     setItems([...items, upItem]);
-    const newItems = newItem.filter((element, index) => {
+    const newItems = newItem.filter((_element, index) => {
       return index !== id;
     });
     setNewItem(newItems);
   };
 
   useEffect(() => {
-    localStorage.setItem("list1", JSON.stringify(items));
+    localStorage.setItem("todos", JSON.stringify(items));
   }, [items]);
 
   useEffect(() => {
-    localStorage.setItem("list2", JSON.stringify(newItem));
+    localStorage.setItem("done", JSON.stringify(newItem));
   }, [newItem]);
 
   return (
@@ -97,9 +93,9 @@ function App() {
         </div>
 
         <div className="mx-auto mt-5 px-4 max-w-7xl">
-          <ToDoList items={items} setItems={setItems} deleteItem={deleteItem} />
+          <ToDoList items={items} setItems={setItems} goToDone={goToDone} />
 
-          {!write && (
+          {!box && (
             <button
               type="button"
               onClick={Open}
@@ -109,7 +105,7 @@ function App() {
             </button>
           )}
 
-          {write && (
+          {box && (
             <CreateBox
               inputWrite={inputWrite}
               handleInputchange={handleInputchange}
@@ -119,7 +115,11 @@ function App() {
           )}
 
           <div>
-            <DoneList newItem={newItem} setNewItem={setNewItem} goUp={goUp} />
+            <Done
+              newItem={newItem}
+              setNewItem={setNewItem}
+              goToTodo={goToTodo}
+            />
           </div>
         </div>
       </div>

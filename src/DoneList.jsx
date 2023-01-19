@@ -1,27 +1,34 @@
 import React from "react";
 import { BsFillTrashFill } from "react-icons/bs";
 
-function DoneList(props) {
+function Done({ newItem, setNewItem, goToTodo }) {
   const handleDeleteItem = (key) => {
-    const newList = props.newItem.filter((element, index) => {
+    const newList = newItem.filter((_element, index) => {
       return index !== key;
     });
-    props.setNewItem(newList);
+    setNewItem(newList);
   };
 
   return (
     <div>
       <h3 className="mt-5 text-xl text-gray-600 font-medium">Things done</h3>
-      {props.newItem.length <= 0 && (
+      {newItem.length <= 0 && (
         <div className="text-xl text-gray-500 py-2">No todos here!!</div>
       )}
-      {props.newItem.map((element, index) => {
+      {newItem.map((element, index) => {
         return (
           <>
             <div className="flex justify-between max-w-sm">
-              <div key={index} className="gap-2">
-                <input onClick={() => props.goUp(index)} type="checkbox" />
-                {element}
+              <div key={index} className="flex gap-3">
+                <div>
+                  <input
+                    defaultChecked
+                    className="cursor-pointer"
+                    onClick={() => goToTodo(index)}
+                    type="checkbox"
+                  />
+                </div>
+                <div> {element}</div>
               </div>
               <div>
                 <BsFillTrashFill
@@ -37,4 +44,4 @@ function DoneList(props) {
   );
 }
 
-export default DoneList;
+export default Done;

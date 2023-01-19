@@ -1,7 +1,7 @@
 import React from "react";
 
 // it is a input box.
-function CreateBox(props) {
+function CreateBox({ inputWrite, handleInputchange, handleSaveButton, Close }) {
   return (
     <div className="bg-white shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
@@ -13,8 +13,8 @@ function CreateBox(props) {
           </label>
 
           <input
-            value={props.inputWrite}
-            onChange={props.handleInputchange}
+            value={inputWrite}
+            onChange={handleInputchange}
             id="to-do"
             placeholder="Write a todo!!"
             className="block w-full py-2 px-3 rounded-md shadow-sm sm:text-sm"
@@ -22,14 +22,14 @@ function CreateBox(props) {
 
           <div className="flex justify-start gap-2 pt-5">
             <button
-              onClick={props.handleSaveButton}
+              onClick={handleSaveButton}
               className="inline-flex mt-2 items-center px-3 py-2 text-sm font-medium leading-4 text-white bg-yellow-500 disabled:bg-gray-400 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
             >
               Save
             </button>
 
             <button
-              onClick={props.Close}
+              onClick={Close}
               type="button"
               className="inline-flex mt-2 items-center px-3 py-2 text-sm font-medium leading-4 border border-black rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
             >
